@@ -8,32 +8,34 @@ import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.com
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
 
+import { RecipeResolverService } from './services/recipe-resolver.service';
+
 const routes: Routes = [
-    { path: '', redirectTo: '/recipes', pathMatch: 'full' },
-    {
-        path: 'recipes',
-        component: RecipesComponent,
-        children: [
-            { path: '', component: RecipeStartComponent },
-            { path: 'new', component: RecipeEditComponent },
-            { path: ':id', component: RecipeDetailComponent },
-            { path: 'edit/:id', component: RecipeEditComponent }
-        ]
-    },
-    {
-        path: 'shopping-list',
-        component: ShoppingListComponent,
-        children: [
-            { path: ':id', component: ShoppingEditComponent}
-        ]
-    }
+  { path: '', redirectTo: '/recipes', pathMatch: 'full' },
+  {
+    path: 'recipes',
+    component: RecipesComponent,
+    children: [
+      { path: '', component: RecipeStartComponent },
+      { path: 'new', component: RecipeEditComponent },
+      { path: ':id', component: RecipeDetailComponent, resolve: [RecipeResolverService] },
+      { path: 'edit/:id', component: RecipeEditComponent, resolve: [RecipeResolverService] }
+    ]
+  },
+  {
+    path: 'shopping-list',
+    component: ShoppingListComponent,
+    children: [
+      { path: ':id', component: ShoppingEditComponent }
+    ]
+  }
 ];
 
 @NgModule({
-    imports: [
-        RouterModule.forRoot(routes)
-    ],
-    exports: [RouterModule]
+  imports: [
+    RouterModule.forRoot(routes)
+  ],
+  exports: [RouterModule]
 })
 export class AppRoutingModule {
 }
