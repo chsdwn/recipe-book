@@ -10,26 +10,7 @@ import { Subject } from 'rxjs';
     providedIn: 'root'
 })
 export class RecipeService {
-    private recipes: Recipe[] = [
-        new Recipe(
-            1,
-            'Pizza Poğaça',
-            'Çocuklarınız için sağlıklı poğaçalar.',
-            'https://i.nefisyemektarifleri.com/2019/11/14/pizza-pogaca.jpg',
-            [
-                new Ingredient('Meat', 2),
-                new Ingredient('Cheese', 5)
-            ]),
-        new Recipe(
-            2,
-            'Pideli Köfte',
-            'Bursa usülü pideli köfte.',
-            'https://i.nefisyemektarifleri.com/2019/11/14/bursa-pideli-kofte.jpg',
-            [
-                new Ingredient('Meat', 2),
-                new Ingredient('Salt', 1)
-            ])
-    ];
+    private recipes: Recipe[] = [];
     recipesChanged = new Subject<Recipe[]>();
 
     constructor(private shoppingListService: ShoppingListService) {}
@@ -46,6 +27,11 @@ export class RecipeService {
     getRecipes() {
         // Returns a copy
         return this.recipes.slice();
+    }
+
+    setRecipes(recipes: Recipe[]) {
+        this.recipes = recipes;
+        this.recipesChanged.next(this.recipes.slice());
     }
 
     addRecipe(recipe: Recipe) {
