@@ -38,7 +38,9 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.alertComponentCloseSubscription.unsubscribe();
+    if (this.alertComponentCloseSubscription) {
+      this.alertComponentCloseSubscription.unsubscribe();
+    }
   }
 
   onSwitchMode() {
