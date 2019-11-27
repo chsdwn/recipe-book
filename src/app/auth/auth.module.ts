@@ -8,7 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   declarations: [AuthComponent],
   imports: [
     ReactiveFormsModule,
-    RouterModule.forChild([{path: 'user', component: AuthComponent}]),
+    RouterModule.forChild([{path: '', component: AuthComponent}]),
     SharedModule
   ],
   exports: [RouterModule]
