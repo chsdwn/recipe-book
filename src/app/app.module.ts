@@ -14,13 +14,15 @@ import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
 import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
-import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
 import { AuthComponent } from './auth/auth.component';
+import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner.component';
+import { AlertComponent } from './shared/alert/alert.component';
 
 import { ShoppingListService } from './services/shopping-list.service';
 import { AuthInterceptor } from './services/auth-interceptor.service';
 
 import { DropdownDirective } from './shared/dropdown.directive';
+
 
 @NgModule({
    declarations: [
@@ -36,6 +38,7 @@ import { DropdownDirective } from './shared/dropdown.directive';
       RecipeEditComponent,
       AuthComponent,
       LoadingSpinnerComponent,
+      AlertComponent,
       DropdownDirective
    ],
    imports: [
