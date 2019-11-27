@@ -22,6 +22,7 @@ import { ShoppingListService } from './services/shopping-list.service';
 import { AuthInterceptor } from './services/auth-interceptor.service';
 
 import { DropdownDirective } from './shared/dropdown.directive';
+import { PlaceholderDirective } from './shared/placeholder.directive';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { DropdownDirective } from './shared/dropdown.directive';
       AuthComponent,
       LoadingSpinnerComponent,
       AlertComponent,
-      DropdownDirective
+      DropdownDirective,
+      PlaceholderDirective
    ],
    imports: [
       AppRoutingModule,
@@ -54,6 +56,10 @@ import { DropdownDirective } from './shared/dropdown.directive';
    ],
    bootstrap: [
       AppComponent
+   ],
+   // It creates components without selectors or route
+   entryComponents: [
+      AlertComponent
    ]
 })
 export class AppModule { }
