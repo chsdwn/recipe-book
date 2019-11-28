@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import * as ShoppingListReducer from './store/shopping-list.reducer';
+import * as ShoppingListActions from './store/shopping-list.actions';
 
 import { ShoppingListService } from '../services/shopping-list.service';
 
@@ -26,6 +27,6 @@ export class ShoppingListComponent implements OnInit {
   }
 
   onEditItem(index: number) {
-    this.shoppingListService.startedEditing.next(index);
+    this.store.dispatch(new ShoppingListActions.StartEdit(index));
   }
 }
