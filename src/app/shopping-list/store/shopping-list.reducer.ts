@@ -4,10 +4,6 @@ import { Ingredient } from '../../models/ingredient.model';
 // It imports everything that exports from given file.
 import * as ShoppingListActions from './shopping-list.actions';
 
-export interface AppState {
-  shoppingList: State;
-}
-
 export interface State {
   ingredients: Ingredient[];
   editedIngredient: Ingredient;

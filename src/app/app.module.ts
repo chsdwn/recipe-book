@@ -10,8 +10,7 @@ import { StoreModule } from '@ngrx/store';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 
-import { shoppingListReducer } from './shopping-list/store/shopping-list.reducer';
-
+import * as AppReducer from './store/app.reducer';
 
 @NgModule({
   // You only use a declaration in project once.
@@ -25,7 +24,7 @@ import { shoppingListReducer } from './shopping-list/store/shopping-list.reducer
     HttpClientModule,
     AppRoutingModule,
     StoreModule.forRoot(
-      { shoppingList: shoppingListReducer },
+      AppReducer.appReducer,
       {
         runtimeChecks: {
           strictStateImmutability: true,
