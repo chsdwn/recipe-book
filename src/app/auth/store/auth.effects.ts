@@ -9,10 +9,15 @@ import { switchMap, catchError, map, tap } from 'rxjs/operators';
 
 import * as AuthActions from './auth.actions';
 
+import { AuthService } from 'src/app/services/auth.service';
+
 import { AuthenticationResponse } from 'src/app/models/authentication-response.model';
+import { User } from 'src/app/models/user.model';
 
 const handleAuthentication = (id: string, email: string, token: string, expiresIn: string) => {
   const expirationDate = new Date(new Date().getTime() + +expiresIn * 1000);
+  const user = new User(id, email, token, expirationDate);
+  localStorage.setItem('userData', JSON.stringify(user));
   // Don't use of() here. It'll already returns an observable.
   return new AuthActions.AuthenticateSuccess({
     userId: id,
@@ -58,6 +63,9 @@ export class AuthEffects {
           returnSecureToken: true
         }
       ).pipe(
+        tap(responseData => {
+          this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+        }),
         map(responseData => {
           return handleAuthentication(responseData.localId, responseData.email, responseData.idToken, responseData.expiresIn);
         }),
@@ -80,8 +88,11 @@ export class AuthEffects {
           returnSecureToken: true
         }
       ).pipe(
+        tap(responseData => {
+          this.authService.setLogoutTimer(+responseData.expiresIn * 1000);
+        }),
         map(responseData => {
-          handleAuthentication(responseData.localId, responseData.email, responseData.idToken, responseData.expiresIn);
+          return handleAuthentication(responseData.localId, responseData.email, responseData.idToken, responseData.expiresIn);
         }),
         catchError(errorResponse => {
           return handleError(errorResponse);
@@ -90,13 +101,57 @@ export class AuthEffects {
     }),
   );
 
+  @Effect()
+  authAutoLogin = this.actions$.pipe(
+    ofType(AuthActions.AUTO_LOGIN),
+    map(() => {
+      const userData: {
+        id: string,
+        email: string,
+        _token: string,
+        _tokenExpirationDate: string
+      } = JSON.parse(localStorage.getItem('userData'));
+      if (!userData) {
+        return { type: 'No Cookie'};
+      }
+      const loadedUser = new User(userData.id, userData.email, userData._token, new Date(userData._tokenExpirationDate));
+
+      if (loadedUser.token) {
+        const expirationDuration = new Date(userData._tokenExpirationDate).getTime() - new Date().getTime();
+        this.authService.setLogoutTimer(expirationDuration);
+        return new AuthActions.AuthenticateSuccess({
+          userId: loadedUser.id,
+          email: loadedUser.email,
+          token: loadedUser.token,
+          expirationDate: new Date(userData._tokenExpirationDate)
+        });
+      } else {
+        return { type: 'No Cookie'};
+      }
+    })
+  );
+
   @Effect({ dispatch: false })
-  authSuccess = this.actions$.pipe(
+  authRedirect = this.actions$.pipe(
     ofType(AuthActions.AUTHENTICATE_SUCCESS),
     tap(() => {
       this.router.navigate(['/']);
     })
   );
 
-  constructor(private actions$: Actions, private http: HttpClient, private router: Router) { }
+  @Effect({dispatch: false})
+  authLogout = this.actions$.pipe(
+    ofType(AuthActions.LOGOUT),
+    tap(() => {
+      this.authService.clearLogoutTimer();
+      localStorage.removeItem('userData');
+      this.router.navigate(['/user']);
+    })
+  );
+
+  constructor(
+    private actions$: Actions,
+    private http: HttpClient,
+    private router: Router,
+    private authService: AuthService) { }
 }

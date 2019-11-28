@@ -1,18 +1,13 @@
 import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { AlertComponent } from '../shared/alert/alert.component';
 
-import { AuthService } from '../services/auth.service';
-
 import * as AppReducer from '../store/app.reducer';
 import * as AuthActions from './store/auth.actions';
-
-import { AuthenticationResponse } from '../models/authentication-response.model';
 
 import { PlaceholderDirective } from '../shared/placeholder.directive';
 
@@ -23,14 +18,13 @@ import { PlaceholderDirective } from '../shared/placeholder.directive';
 export class AuthComponent implements OnInit, OnDestroy {
   @ViewChild(PlaceholderDirective, {static: true}) alertHost: PlaceholderDirective;
   userForm: FormGroup;
+  authSubscription: Subscription;
   error: string = null;
   isLoginMode = false;
   isLoading = false;
   private alertComponentCloseSubscription: Subscription;
 
   constructor(
-    private authService: AuthService,
-    private router: Router,
     private componentFactoryResolver: ComponentFactoryResolver,
     private store: Store<AppReducer.AppState>
   ) {}
@@ -40,7 +34,7 @@ export class AuthComponent implements OnInit, OnDestroy {
       email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, [Validators.required, Validators.minLength(6)])
     });
-    this.store.select('auth').subscribe(authState => {
+    this.authSubscription = this.store.select('auth').subscribe(authState => {
       this.isLoading = authState.loading;
       this.error = authState.authError;
       if (this.error) {
@@ -53,6 +47,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (this.alertComponentCloseSubscription) {
       this.alertComponentCloseSubscription.unsubscribe();
     }
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
   }
 
   onSwitchMode() {
@@ -60,7 +57,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   }
 
   onHandleError() {
-    this.error = null;
+    this.store.dispatch(new AuthActions.ClearError());
   }
 
   onSubmit() {

@@ -8,7 +8,6 @@ import * as AppReducer from '../store/app.reducer';
 import * as AuthActions from '../auth/store/auth.actions';
 
 import { DataStorageService } from '../services/data-storage.service';
-import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -21,7 +20,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private dataStorageService: DataStorageService,
-    private authService: AuthService,
     private store: Store<AppReducer.AppState>) {}
 
   ngOnInit() {
