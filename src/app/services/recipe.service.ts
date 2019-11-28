@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { ShoppingListService } from './shopping-list.service';
-
 import * as ShoppingListReducer from '../shopping-list/store/shopping-list.reducer';
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
 
@@ -18,10 +16,7 @@ export class RecipeService {
   private recipes: Recipe[] = [];
   recipesChanged = new Subject<Recipe[]>();
 
-  constructor(
-    private shoppingListService: ShoppingListService,
-    private store: Store<ShoppingListReducer.AppState>
-  ) { }
+  constructor(private store: Store<ShoppingListReducer.AppState>) { }
 
   getRecipe(id: number) {
     const recipe = this.recipes.find(
