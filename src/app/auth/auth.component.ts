@@ -3,10 +3,14 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 
 import { AlertComponent } from '../shared/alert/alert.component';
 
 import { AuthService } from '../services/auth.service';
+
+import * as AppReducer from '../store/app.reducer';
+import * as AuthActions from './store/auth.actions';
 
 import { AuthenticationResponse } from '../models/authentication-response.model';
 
@@ -27,13 +31,21 @@ export class AuthComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private componentFactoryResolver: ComponentFactoryResolver
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private store: Store<AppReducer.AppState>
   ) {}
 
   ngOnInit() {
     this.userForm = new FormGroup({
       email: new FormControl(null, [Validators.required, Validators.email]),
       password: new FormControl(null, [Validators.required, Validators.minLength(6)])
+    });
+    this.store.select('auth').subscribe(authState => {
+      this.isLoading = authState.loading;
+      this.error = authState.authError;
+      if (this.error) {
+        this.showErrorAlert(this.error);
+      }
     });
   }
 
@@ -57,22 +69,14 @@ export class AuthComponent implements OnInit, OnDestroy {
     if (this.userForm.valid) {
       this.isLoading = true;
       if (this.isLoginMode) {
-        authenticationObservable = this.authService.login(this.userForm.value.email, this.userForm.value.password);
+        this.store.dispatch(new AuthActions.LoginStart({
+          email: this.userForm.value.email,
+          password: this.userForm.value.password
+        }));
       } else {
         authenticationObservable = this.authService.signup(this.userForm.value.email, this.userForm.value.password);
         this.userForm.reset();
       }
-
-      authenticationObservable.subscribe(
-        signupResponseData => {
-          this.isLoading = false;
-          this.router.navigate(['/recipes']);
-        }, errorMessage => {
-          this.isLoading = false;
-          this.error = errorMessage;
-          this.showErrorAlert(errorMessage);
-        }
-      );
     } else {
       return;
     }
