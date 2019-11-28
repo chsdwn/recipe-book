@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 
 import { ShoppingListService } from './shopping-list.service';
 
+import * as ShoppingListReducer from '../shopping-list/store/shopping-list.reducer';
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
 
 import { Recipe } from '../models/recipe.model';
@@ -19,7 +20,7 @@ export class RecipeService {
 
   constructor(
     private shoppingListService: ShoppingListService,
-    private store: Store<{shoppingList: {ingredients: Ingredient[]}}>
+    private store: Store<ShoppingListReducer.AppState>
   ) { }
 
   getRecipe(id: number) {
