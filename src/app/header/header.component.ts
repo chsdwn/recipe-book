@@ -6,8 +6,7 @@ import { Store } from '@ngrx/store';
 
 import * as AppReducer from '../store/app.reducer';
 import * as AuthActions from '../auth/store/auth.actions';
-
-import { DataStorageService } from '../services/data-storage.service';
+import * as RecipesActions from '../recipes/store/recipe.actions';
 
 @Component({
   selector: 'app-header',
@@ -18,9 +17,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private userSubscription: Subscription;
   isAuthenticated = false;
 
-  constructor(
-    private dataStorageService: DataStorageService,
-    private store: Store<AppReducer.AppState>) {}
+  constructor(private store: Store<AppReducer.AppState>) {}
 
   ngOnInit() {
     this.userSubscription = this.store.select('auth')
@@ -37,11 +34,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSaveData() {
-    this.dataStorageService.storeRecipes();
+    this.store.dispatch(new RecipesActions.StoreRecipes());
   }
 
   onFetchData() {
-    this.dataStorageService.fetchRecipes().subscribe();
+    this.store.dispatch(new RecipesActions.FetchRecipes());
   }
 
   onLogout() {

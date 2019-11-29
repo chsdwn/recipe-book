@@ -16,6 +16,7 @@ import { HeaderComponent } from './header/header.component';
 
 import * as AppReducer from './store/app.reducer';
 import { AuthEffects } from './auth/store/auth.effects';
+import { RecipesEffect } from './recipes/store/recipe.effects';
 
 @NgModule({
   // You only use a declaration in project once.
@@ -37,7 +38,7 @@ import { AuthEffects } from './auth/store/auth.effects';
         }
       }
     ),
-    EffectsModule.forRoot([AuthEffects]),
+    EffectsModule.forRoot([AuthEffects, RecipesEffect]),
     StoreDevtoolsModule.instrument({logOnly: environment.production }),
     StoreRouterConnectingModule.forRoot(),
     SharedModule,
